@@ -64,9 +64,16 @@ export function buildPayload(type: CodeType, f: QrFields): string {
   }
 }
 
+export interface AiSpec {
+  type?: string;
+  fields?: Record<string, string>;
+  design?: { fg?: string; bg?: string; size?: number; level?: string };
+  note?: string;
+}
+
 export interface ParsedIntent {
   type: CodeType;
-  fields: Partial<QrFields>;
+  fields: Record<string, string>;
   design?: { fg?: string; bg?: string; size?: number; level?: ErrorLevel };
   note?: string;
 }
@@ -83,8 +90,8 @@ export function parseIntentLocally(prompt: string): ParsedIntent {
     return {
       type: "wifi",
       fields: {
-        wifiSsid: wifi[1].trim(),
-        wifiPassword: wifi[2],
+        wifiSsid: (wifi[1] ?? "").trim(),
+        wifiPassword: wifi[2] ?? "",
         wifiEncryption: /wep/i.test(lower) ? "WEP" : "WPA",
       },
       note: "Parsed locally (WiFi)",

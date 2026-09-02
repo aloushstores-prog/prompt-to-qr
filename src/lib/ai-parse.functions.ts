@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { AiSpec } from "./qr-payload";
 
 const SYSTEM_PROMPT = `You convert natural language requests into a structured QR/barcode payload spec.
 Return ONLY minified JSON, no markdown, matching:
@@ -35,7 +36,7 @@ export const parseIntentWithAI = createServerFn({ method: "POST" })
     if (!match) return { ok: false as const, error: "unparseable" };
 
     try {
-      return { ok: true as const, result: JSON.parse(match[0]) as unknown };
+      return { ok: true as const, result: JSON.parse(match[0]) as AiSpec };
     } catch {
       return { ok: false as const, error: "unparseable" };
     }

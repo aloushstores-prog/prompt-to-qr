@@ -36,6 +36,7 @@ import {
   buildPayload,
   emptyFields,
   parseIntentLocally,
+  type AiSpec,
   type CodeType,
   type ErrorLevel,
   type QrFields,
@@ -86,21 +87,17 @@ export function QrStudio() {
     setFields((f) => ({ ...f, [key]: v }));
 
   const applyIntent = useCallback(
-    (parsed: {
-      type?: string;
-      fields?: Partial<QrFields>;
-      design?: { fg?: string; bg?: string; size?: number; level?: ErrorLevel };
-    }) => {
+    (parsed: AiSpec) => {
       const validTypes: CodeType[] = ["url", "text", "wifi", "vcard", "whatsapp", "barcode"];
       const nextType = validTypes.includes(parsed.type as CodeType)
         ? (parsed.type as CodeType)
         : "text";
       setType(nextType);
-      setFields((f) => ({ ...f, ...(parsed.fields ?? {}) }));
+      setFields((f) => ({ ...f, ...((parsed.fields ?? {}) as Partial<QrFields>) }));
       if (parsed.design?.fg) setFg(parsed.design.fg);
       if (parsed.design?.bg) setBg(parsed.design.bg);
       if (parsed.design?.size) setSize(Math.min(1024, Math.max(128, parsed.design.size)));
-      if (parsed.design?.level) setLevel(parsed.design.level);
+      if (parsed.design?.level) setLevel(parsed.design.level as ErrorLevel);
     },
     [],
   );
@@ -113,7 +110,7 @@ export function QrStudio() {
       try {
         const res = await parseIntentWithAI({ data: { prompt: q } });
         if (res.ok) {
-          applyIntent(res.result as Parameters<typeof applyIntent>[0]);
+          applyIntent(res.result);
           toast.success("Generated with Gemini");
           return;
         }
@@ -439,7 +436,7 @@ export function QrStudio() {
                   max={1024}
                   step={32}
                   value={[size]}
-                  onValueChange={([v]) => setSize(v)}
+                  onValueChange={([v]) => setSize(v ?? 512)}
                 />
               </div>
               <div className="space-y-2">
