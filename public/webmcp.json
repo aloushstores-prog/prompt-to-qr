@@ -1,0 +1,44 @@
+{
+  "name": "AI QR Generator",
+  "version": "1.0.0",
+  "description": "Exposes tool capabilities for AI Agents to create QR codes and barcodes programmatically.",
+  "tools": [
+    {
+      "name": "generate_qr",
+      "description": "Generates a QR code image data URL based on payload and options.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The URL, text, or structured payload to encode."
+          },
+          "type": { "type": "string", "enum": ["url", "wifi", "vcard", "text"] }
+        },
+        "required": ["text"]
+      }
+    },
+    {
+      "name": "generate_barcode",
+      "description": "Generates a CODE128 barcode image data URL from a value.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string", "description": "The value to encode as a barcode." }
+        },
+        "required": ["value"]
+      }
+    },
+    {
+      "name": "parse_prompt",
+      "description": "Parses a natural language request into a structured QR payload spec and applies it to the studio UI.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": { "type": "string", "description": "Natural language request." }
+        },
+        "required": ["prompt"]
+      }
+    }
+  ]
+}
